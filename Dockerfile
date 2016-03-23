@@ -23,6 +23,7 @@ VOLUME ["/etc/openvpn"]
 EXPOSE 1194/udp
 
 WORKDIR /etc/openvpn
+
 CMD ["ovpn_run"]
 
 COPY ./bin /usr/local/bin
@@ -30,9 +31,3 @@ RUN chmod a+x /usr/local/bin/*
 
 # Add support for OTP authentication using a PAM module
 COPY ./otp/openvpn /etc/pam.d/
-
-# Add openvpn config
-COPY ./config/openvpn.conf openvpn.conf
-
-# Make dir for keys
-RUN ["/bin/bash", "-c", "mkdir $OPENVPN/ccd"]

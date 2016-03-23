@@ -2,10 +2,6 @@
 
 OpenVPN server in a Docker container complete with an EasyRSA PKI CA.
 
-#### Example Service
-
-* [backroad.io](http://beta.backroad.io?utm_source=beznosa/docker-openvpn-staticip&utm_medium=readme&utm_campaign=20150621) - powered by *beznosa/docker-openvpn-staticip*
-
 ## Quick Start
 
 * Create the `$OVPN_DATA` volume container, i.e. `OVPN_DATA="ovpn-data"`

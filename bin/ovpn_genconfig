@@ -214,6 +214,10 @@ status /tmp/openvpn-status.log
 
 user nobody
 group nogroup
+
+client-config-dir $OPENVPN/ccd
+client-to-client
+cipher BF-CBC
 EOF
 
 [ -n "$OVPN_TLS_CIPHER" ] && echo "tls-cipher $OVPN_TLS_CIPHER" >> "$conf"
