@@ -8,11 +8,11 @@ As an example, users connecting from an airplane wifi network may experience hig
 ## Using TCP
 Those requiring TCP connections should initialize the data container by specifying the TCP protocol and port number:
 
-    docker run --volumes-from $OVPN_DATA --rm kylemanna/openvpn ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443
-    docker run --volumes-from $OVPN_DATA --rm -it kylemanna/openvpn ovpn_initpki
+    docker run --volumes-from $OVPN_DATA --rm beznosa/docker-openvpn-staticip ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443
+    docker run --volumes-from $OVPN_DATA --rm -it beznosa/docker-openvpn-staticip ovpn_initpki
 
 Because the server container always exposes port 1194, regardless of the
 specified protocol, adjust the mapping appropriately:
 
-    docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --cap-add=NET_ADMIN kylemanna/openvpn
+    docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --cap-add=NET_ADMIN beznosa/docker-openvpn-staticip
 
