@@ -6,7 +6,7 @@ The docker image is setup for static client configuration on the 192.168.254.0/2
 
 1. Create a client specific configuration:
 
-        $ echo "ifconfig-push 192.168.254.1 192.168.254.2" | docker run --volumes-from $OVPN_DATA -i --rm beznosa/docker-openvpn-staticip tee /etc/openvpn/ccd/CERT_COMMON_NAME
+        $ docker run --volumes-from $OVPN_DATA --rm -it beznosa/docker-openvpn-staticip ovpn_staticip CLIENTNAME CLIENTIP SERVERIP
         ifconfig-push 192.168.254.1 192.168.254.2
 
 2. Wait for client to reconnect if necessary

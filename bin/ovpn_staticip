@@ -1,0 +1,11 @@
+#!/bin/bash
+
+#
+# Push static ip for client
+#
+
+client="$1"
+ip="$2"
+serverip="$3"
+
+echo "ifconfig-push $ip $serverip" >> "$OPENVPN/ccd/$client"

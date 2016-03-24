@@ -15,6 +15,7 @@ ARGS=("--config" "$OPENVPN/openvpn.conf")
 
 source "$OPENVPN/ovpn_env.sh"
 
+mkdir -p /etc/openvpn/ccd
 mkdir -p /dev/net
 if [ ! -c /dev/net/tun ]; then
     mknod /dev/net/tun c 10 200
