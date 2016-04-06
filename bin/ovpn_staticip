@@ -6,6 +6,5 @@
 
 client="$1"
 ip="$2"
-serverip="$3"
 
-echo "ifconfig-push $ip $serverip" >> "$OPENVPN/ccd/$client"
+echo "ifconfig-push $ip 255.0.0.0" >> "$OPENVPN/ccd/$client"

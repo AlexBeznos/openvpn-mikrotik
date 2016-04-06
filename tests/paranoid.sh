@@ -2,7 +2,7 @@
 
 set -ex
 
-IMG=${IMG:-beznosa/docker-openvpn-staticip}
+IMG=${IMG:-beznosa/openvpn-mikrotik}
 
 temp=$(mktemp -d)
 
@@ -12,7 +12,7 @@ SERV_IP=$(ip -4 -o addr show scope global  | awk '{print $4}' | sed -e 's:/.*::'
 
 docker run --net=none --rm -t -i -v $PWD:/etc/openvpn $IMG ovpn_genconfig -u udp://$SERV_IP
 
-docker run --net=none --rm -t -i -v $PWD:/etc/openvpn -e "EASYRSA_BATCH=1" -e "EASYRSA_REQ_CN=Travis-CI Test CA" beznosa/docker-openvpn-staticip ovpn_initpki nopass
+docker run --net=none --rm -t -i -v $PWD:/etc/openvpn -e "EASYRSA_BATCH=1" -e "EASYRSA_REQ_CN=Travis-CI Test CA" beznosa/openvpn-mikrotik ovpn_initpki nopass
 
 docker run --net=none --rm -t -i -v $PWD:/etc/openvpn $IMG ovpn_copy_server_files
 

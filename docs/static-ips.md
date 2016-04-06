@@ -6,7 +6,7 @@ The docker image is setup for static client configuration on the 192.168.254.0/2
 
 1. Create a client specific configuration:
 
-        $ docker run --volumes-from $OVPN_DATA --rm -it beznosa/docker-openvpn-staticip ovpn_staticip CLIENTNAME CLIENTIP SERVERIP
+        $ docker run --volumes-from $OVPN_DATA --rm -it beznosa/openvpn-mikrotik ovpn_staticip CLIENTNAME CLIENTIP
         ifconfig-push 192.168.254.1 192.168.254.2
 
 2. Wait for client to reconnect if necessary
@@ -15,10 +15,10 @@ The docker image is setup for static client configuration on the 192.168.254.0/2
 
 Login to the data volume with a `bash` container, note only changes in /etc/openvpn will persist:
 
-    docker run --volumes-from $OVPN_DATA -it --rm beznosa/docker-openvpn-staticip bash -l
+    docker run --volumes-from $OVPN_DATA -it --rm beznosa/openvpn-mikrotik bash -l
 
 ## Upgrading from Old OpenVPN Configurations
 
 If you're running an old configuration and need to upgrade it to pull in the ccd directory run the following:
 
-    docker run  --volumes-from $OVPN_DATA --rm beznosa/docker-openvpn-staticip ovpn_genconfig
+    docker run  --volumes-from $OVPN_DATA --rm beznosa/openvpn-mikrotik ovpn_genconfig

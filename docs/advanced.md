@@ -9,12 +9,12 @@ The [`ovpn_genconfig`](/bin/ovpn_genconfig) script is intended for simple config
 
         mkdir openvpn0
         cd openvpn0
-        docker run --rm -v $PWD:/etc/openvpn beznosa/docker-openvpn-staticip ovpn_genconfig -u udp://VPN.SERVERNAME.COM:1194
-        docker run --rm -v $PWD:/etc/openvpn -it beznosa/docker-openvpn-staticip ovpn_initpki
+        docker run --rm -v $PWD:/etc/openvpn beznosa/openvpn-mikrotik ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443
+        docker run --rm -v $PWD:/etc/openvpn -it beznosa/openvpn-mikrotik ovpn_initpki
         vim openvpn.conf
-        docker run --rm -v $PWD:/etc/openvpn -it beznosa/docker-openvpn-staticip easyrsa build-client-full CLIENTNAME nopass
-        docker run --rm -v $PWD:/etc/openvpn beznosa/docker-openvpn-staticip ovpn_getclient CLIENTNAME > CLIENTNAME.ovpn
+        docker run --rm -v $PWD:/etc/openvpn -it beznosa/openvpn-mikrotik easyrsa build-client-full CLIENTNAME nopass
+        docker run --rm -v $PWD:/etc/openvpn beznosa/openvpn-mikrotik ovpn_getclient CLIENTNAME > CLIENTNAME.ovpn
 
 * Start the server with:
 
-        docker run -v $PWD:/etc/openvpn -d -p 1194:1194/udp --privileged beznosa/docker-openvpn-staticip
+        docker run -v $PWD:/etc/openvpn -d -p 443:1194/tcp --privileged beznosa/openvpn-mikrotik

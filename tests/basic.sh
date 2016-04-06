@@ -2,7 +2,7 @@
 set -ex
 OVPN_DATA=basic-data
 CLIENT=travis-client
-IMG=beznosa/docker-openvpn-staticip
+IMG=beznosa/openvpn-mikrotik
 
 #
 # Create a docker container with the config data

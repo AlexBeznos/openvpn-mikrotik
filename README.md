@@ -10,35 +10,35 @@ OpenVPN server in a Docker container complete with an EasyRSA PKI CA and setted 
 
 * Initialize the `$OVPN_DATA` container that will hold the configuration files and certificates
 
-`docker run --volumes-from $OVPN_DATA --rm beznosa/docker-openvpn-staticip ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443`
+`docker run --volumes-from $OVPN_DATA --rm beznosa/openvpn-mikrotik ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443`
 
 
-  `docker run --volumes-from $OVPN_DATA --rm -it beznosa/docker-openvpn-staticip ovpn_initpki`
+  `docker run --volumes-from $OVPN_DATA --rm -it beznosa/openvpn-mikrotik ovpn_initpki`
 
 * Start OpenVPN server process
 
     - On Docker [version 1.2](http://blog.docker.com/2014/08/announcing-docker-1-2-0/) and newer
 
-      `docker run --volumes-from $OVPN_DATA -d -p 1194:1194/udp --cap-add=NET_ADMIN beznosa/docker-openvpn-staticip`
+      `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --cap-add=NET_ADMIN beznosa/openvpn-mikrotik`
 
     - On Docker older than version 1.2
 
-      `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --privileged beznosa/docker-openvpn-staticip`
+      `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --privileged beznosa/openvpn-mikrotik`
 
 * Generate a client certificate without a passphrase
 
-        docker run --volumes-from $OVPN_DATA --rm -it beznosa/docker-openvpn-staticip easyrsa build-client-full CLIENTNAME nopass
+        docker run --volumes-from $OVPN_DATA --rm -it beznosa/openvpn-mikrotik easyrsa build-client-full CLIENTNAME nopass
 
 * Retrieve the client configuration with embedded certificates
 
-        docker run --volumes-from $OVPN_DATA --rm beznosa/docker-openvpn-staticip ovpn_getclient CLIENTNAME > CLIENTNAME.ovpn
+        docker run --volumes-from $OVPN_DATA --rm beznosa/openvpn-mikrotik ovpn_getclient CLIENTNAME > CLIENTNAME.ovpn
 
 * Create an environment variable with the name DEBUG and value of 1 to enable debug output (using "docker -e").
-  `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --privileged -e DEBUG=1 beznosa/docker-openvpn-staticip`
+  `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --privileged -e DEBUG=1 beznosa/openvpn-mikrotik`
 
 ## How Does It Work?
 
-Initialize the volume container using the `beznosa/docker-openvpn-staticip` image with the
+Initialize the volume container using the `beznosa/openvpn-mikrotik` image with the
 included scripts to automatically generate:
 
 - Diffie-Hellman parameters
@@ -54,11 +54,11 @@ declares that directory as a volume. It means that you can start another
 container with the `--volumes-from` flag, and access the configuration.
 The volume also holds the PKI keys and certs so that it could be backed up.
 
-To generate a client certificate, `beznosa/docker-openvpn-staticip` uses EasyRSA via the
+To generate a client certificate, `beznosa/openvpn-mikrotik` uses EasyRSA via the
 `easyrsa` command in the container's path.  The `EASYRSA_*` environmental
 variables place the PKI CA under `/etc/opevpn/pki`.
 
-Conveniently, `beznosa/docker-openvpn-staticip` comes with a script called `ovpn_getclient`,
+Conveniently, `beznosa/openvpn-mikrotik` comes with a script called `ovpn_getclient`,
 which dumps an inline OpenVPN client configuration file.  This single file can
 then be given to a client for access to the VPN.
 
@@ -124,7 +124,7 @@ OpenVPN with latest OpenSSL on Ubuntu 12.04 LTS).
 ### It Doesn't Stomp All Over the Server's Filesystem
 
 Everything for the Docker container is contained in two images: the ephemeral
-run time image (beznosa/docker-openvpn-staticip) and the data image (using busybox as a
+run time image (beznosa/openvpn-mikrotik) and the data image (using busybox as a
 base).  To remove it, remove the two Docker images and corresponding containers
 and it's all gone.  This also makes it easier to run multiple servers since
 each lives in the bubble of the container (of course multiple IPs or separate

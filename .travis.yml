@@ -12,10 +12,10 @@ services:
 
 before_install:
     - docker --version
-    - docker build -t beznosa/docker-openvpn-staticip .
-    - docker inspect beznosa/docker-openvpn-staticip
-    - docker run beznosa/docker-openvpn-staticip openvpn --version || true # why does it returns 1?
-    - docker run beznosa/docker-openvpn-staticip openssl version
+    - docker build -t beznosa/openvpn-mikrotik .
+    - docker inspect beznosa/openvpn-mikrotik
+    - docker run beznosa/openvpn-mikrotik openvpn --version || true # why does it returns 1?
+    - docker run beznosa/openvpn-mikrotik openssl version
 
 script:
     - pushd tests && for i in *.sh; do "./$i"; done && popd

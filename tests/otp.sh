@@ -2,7 +2,7 @@
 set -ex
 OVPN_DATA=basic-data-otp
 CLIENT=travis-client
-IMG=beznosa/docker-openvpn-staticip
+IMG=beznosa/openvpn-mikrotik
 OTP_USER=otp
 # Function to fail
 abort() { cat <<< "$@" 1>&2; exit 1; }

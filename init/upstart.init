@@ -4,5 +4,5 @@ start on filesystem and started docker
 stop on runlevel [!2345]
 respawn
 script
-  exec docker run --volumes-from ovpn-data --rm -p 1194:1194/udp --cap-add=NET_ADMIN beznosa/docker-openvpn-staticip
+  exec docker run --volumes-from ovpn-data --rm -p 1194:1194/udp --cap-add=NET_ADMIN beznosa/openvpn-mikrotik
 end script
