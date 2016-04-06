@@ -64,8 +64,6 @@ OVPN_SERVER=192.168.255.0/24
 OVPN_DEFROUTE=1
 OVPN_NAT=0
 OVPN_DNS=1
-OVPN_DEVICE="tun"
-OVPN_DEVICEN=0
 OVPN_ROUTES=()
 TMP_ROUTES=()
 OVPN_PUSH=()
@@ -73,7 +71,6 @@ TMP_PUSH=()
 OVPN_DNS_SERVERS=("8.8.8.8" "8.8.4.4")
 TMP_DNS_SERVERS=()
 OVPN_TLS_CIPHER=''
-OVPN_CIPHER=''
 OVPN_AUTH=''
 
 # Import defaults if present
@@ -84,9 +81,6 @@ while getopts ":a:C:T:r:s:du:cp:n:DNm:tz2" opt; do
     case $opt in
         a)
             OVPN_AUTH="$OPTARG"
-            ;;
-        C)
-            OVPN_CIPHER="$OPTARG"
             ;;
         T)
             OVPN_TLS_CIPHER="$OPTARG"
@@ -103,9 +97,6 @@ while getopts ":a:C:T:r:s:du:cp:n:DNm:tz2" opt; do
         u)
             OVPN_SERVER_URL=$OPTARG
             ;;
-        c)
-            OVPN_CLIENT_TO_CLIENT=1
-            ;;
         p)
             TMP_PUSH+=("$OPTARG")
             ;;
@@ -120,12 +111,6 @@ while getopts ":a:C:T:r:s:du:cp:n:DNm:tz2" opt; do
             ;;
         m)
             OVPN_MTU=$OPTARG
-            ;;
-        t)
-            OVPN_DEVICE="tap"
-            ;;
-        z)
-            OVPN_COMP_LZO=1
             ;;
         2)
             OVPN_OTP_AUTH=1
@@ -156,7 +141,6 @@ done
 
 # Server name is in the form "udp://vpn.example.com:1194"
 if [[ "$OVPN_SERVER_URL" =~ ^((udp|tcp)://)?([0-9a-zA-Z\.\-]+)(:([0-9]+))?$ ]]; then
-    OVPN_PROTO=${BASH_REMATCH[2]};
     OVPN_CN=${BASH_REMATCH[3]};
     OVPN_PORT=${BASH_REMATCH[5]};
 else
@@ -167,15 +151,13 @@ else
 fi
 
 # Apply defaults
-[ -z "$OVPN_PROTO" ] && OVPN_PROTO=udp
 [ -z "$OVPN_PORT" ] && OVPN_PORT=1194
 [ ${#OVPN_ROUTES[@]} -eq 0 ] && OVPN_ROUTES=("192.168.254.0/24")
 
 export OVPN_SERVER OVPN_ROUTES OVPN_DEFROUTE
-export OVPN_SERVER_URL OVPN_ENV OVPN_PROTO OVPN_CN OVPN_PORT
-export OVPN_CLIENT_TO_CLIENT OVPN_PUSH OVPN_NAT OVPN_DNS OVPN_MTU OVPN_DEVICE
-export OVPN_TLS_CIPHER OVPN_CIPHER OVPN_AUTH
-export OVPN_COMP_LZO
+export OVPN_SERVER_URL OVPN_ENV OVPN_CN OVPN_PORT
+export OVPN_PUSH OVPN_NAT OVPN_DNS OVPN_MTU
+export OVPN_TLS_CIPHER OVPN_AUTH
 export OVPN_OTP_AUTH
 
 # Preserve config
@@ -206,10 +188,12 @@ keepalive 10 60
 persist-key
 persist-tun
 
-proto $OVPN_PROTO
+# Mikrotik supports only tcp
+proto tcp
+
 # Rely on Docker to do port mapping, internally always 1194
 port 1194
-dev $OVPN_DEVICE$OVPN_DEVICEN
+dev tun0
 status /tmp/openvpn-status.log
 
 user nobody
@@ -217,26 +201,24 @@ group nogroup
 
 client-config-dir $OPENVPN/ccd
 client-to-client
+push "route $(getroute $OVPN_SERVER) 255.0.0.0"
 cipher BF-CBC
+;comp-lzo
 EOF
 
 [ -n "$OVPN_TLS_CIPHER" ] && echo "tls-cipher $OVPN_TLS_CIPHER" >> "$conf"
-[ -n "$OVPN_CIPHER" ] && echo "cipher $OVPN_CIPHER" >> "$conf"
 [ -n "$OVPN_AUTH" ] && echo "auth $OVPN_AUTH" >> "$conf"
-
-[ -n "$OVPN_CLIENT_TO_CLIENT" ] && echo "client-to-client" >> "$conf"
-[ -n "$OVPN_COMP_LZO" ] && echo "comp-lzo" >> "$conf"
 
 [ "$OVPN_DNS" == "1" ] && for i in "${OVPN_DNS_SERVERS[@]}"; do
   echo "push dhcp-option DNS $i" >> "$conf"
 done
-# Append Routes
-for i in "${OVPN_ROUTES[@]}"; do
-    # If user passed "0" skip this, assume no extra routes
-    [ "$i" = "0" ] && break;
-    echo route $(getroute "$i") >> "$conf"
-done
-
+# # Append Routes
+# for i in "${OVPN_ROUTES[@]}"; do
+#     # If user passed "0" skip this, assume no extra routes
+#     [ "$i" = "0" ] && break;
+#     echo route $(getroute "$i") >> "$conf"
+# done
+# 
 # Append push commands
 for i in "${OVPN_PUSH[@]}"; do
     echo push \"$i\" >> "$conf"

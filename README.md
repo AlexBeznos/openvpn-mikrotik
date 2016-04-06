@@ -1,6 +1,6 @@
 # OpenVPN for Docker
 
-OpenVPN server in a Docker container complete with an EasyRSA PKI CA.
+OpenVPN server in a Docker container complete with an EasyRSA PKI CA and setted up for using with mikrotik routers.
 
 ## Quick Start
 
@@ -9,11 +9,8 @@ OpenVPN server in a Docker container complete with an EasyRSA PKI CA.
         docker run --name $OVPN_DATA -v /etc/openvpn busybox
 
 * Initialize the `$OVPN_DATA` container that will hold the configuration files and certificates
-  - For UDP
-    `docker run --volumes-from $OVPN_DATA --rm beznosa/docker-openvpn-staticip ovpn_genconfig -d -u udp://VPN.SERVERNAME.COM`
 
-  - For TCP
-    `docker run --volumes-from $OVPN_DATA --rm beznosa/docker-openvpn-staticip ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443`
+`docker run --volumes-from $OVPN_DATA --rm beznosa/docker-openvpn-staticip ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443`
 
 
   `docker run --volumes-from $OVPN_DATA --rm -it beznosa/docker-openvpn-staticip ovpn_initpki`
@@ -26,10 +23,7 @@ OpenVPN server in a Docker container complete with an EasyRSA PKI CA.
 
     - On Docker older than version 1.2
 
-        + For UDP
-            `docker run --volumes-from $OVPN_DATA -d -p 1194:1194/udp --privileged beznosa/docker-openvpn-staticip`
-        + For TCP
-            `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --privileged beznosa/docker-openvpn-staticip`
+      `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --privileged beznosa/docker-openvpn-staticip`
 
 * Generate a client certificate without a passphrase
 
@@ -40,10 +34,7 @@ OpenVPN server in a Docker container complete with an EasyRSA PKI CA.
         docker run --volumes-from $OVPN_DATA --rm beznosa/docker-openvpn-staticip ovpn_getclient CLIENTNAME > CLIENTNAME.ovpn
 
 * Create an environment variable with the name DEBUG and value of 1 to enable debug output (using "docker -e").
-  - For UDP protocol
-    `docker run --volumes-from $OVPN_DATA -d -p 1194:1194/udp --privileged -e DEBUG=1 beznosa/docker-openvpn-staticip`
-  - For TCP protocol
-    `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --privileged -e DEBUG=1 beznosa/docker-openvpn-staticip`
+  `docker run --volumes-from $OVPN_DATA -d -p 443:1194/tcp --privileged -e DEBUG=1 beznosa/docker-openvpn-staticip`
 
 ## How Does It Work?
 
