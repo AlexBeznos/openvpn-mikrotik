@@ -10,10 +10,9 @@ OpenVPN server in a Docker container complete with an EasyRSA PKI CA and setted 
 
 * Initialize the `$OVPN_DATA` container that will hold the configuration files and certificates
 
-`docker run --volumes-from $OVPN_DATA --rm beznosa/openvpn-mikrotik ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443`
+        docker run --volumes-from $OVPN_DATA --rm beznosa/openvpn-mikrotik ovpn_genconfig -u tcp://VPN.SERVERNAME.COM:443
 
-
-  `docker run --volumes-from $OVPN_DATA --rm -it beznosa/openvpn-mikrotik ovpn_initpki`
+        docker run --volumes-from $OVPN_DATA --rm -it beznosa/openvpn-mikrotik ovpn_initpki
 
 * Start OpenVPN server process
 
