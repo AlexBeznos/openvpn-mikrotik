@@ -1,0 +1,51 @@
+#!/bin/bash
+
+#
+# Get an OpenVPN client configuration file
+#
+
+if [ "$DEBUG" == "1" ]; then
+    set -x
+fi
+
+set -e
+
+if [ -z "$OPENVPN" ]; then
+    export OPENVPN="$PWD"
+fi
+if ! source "$OPENVPN/ovpn_env.sh"; then
+    echo "Could not source $OPENVPN/ovpn_env.sh."
+    exit 1
+fi
+if [ -z "$EASYRSA_PKI" ]; then
+    export EASYRSA_PKI="$OPENVPN/pki"
+fi
+
+cn="$1"
+parm="$2"
+
+if [ ! -f "$EASYRSA_PKI/private/${cn}.key" ]; then
+    echo "Unable to find \"${cn}\", please try again or generate the key first" >&2
+    exit 1
+fi
+
+get_client_config() {
+    mode="$1"
+    echo "
+<root>
+<key>
+$(cat $EASYRSA_PKI/private/${cn}.key)
+</key>
+<cert>
+$(openssl x509 -in $EASYRSA_PKI/issued/${cn}.crt)
+</cert>
+<ca>
+$(cat $EASYRSA_PKI/ca.crt)
+</ca>
+<root>
+"
+}
+
+dir="$OPENVPN/clients/$cn"
+
+get_client_config
